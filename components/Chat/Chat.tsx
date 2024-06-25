@@ -32,7 +32,7 @@ export interface ChatGPInstance {
 }
 
 const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) => {
-  const url = '/api/chat'
+  const url = 'https://nova-ondemand.its.iastate.edu/rnode/nova21-gpu-3-eth/14340/proxy/5000/chat'
 
   const data = {
     prompt: chat?.persona?.prompt,
@@ -43,7 +43,8 @@ const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) =>
   return await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'accept': 'text/event-stream'
     },
     body: JSON.stringify(data)
   })
