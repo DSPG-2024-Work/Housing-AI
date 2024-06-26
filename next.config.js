@@ -1,11 +1,21 @@
 require('path')
 
+
 /** @type {import('next').NextConfig} */
+
+// HPC configuration
+const url = process.env.VSCODE_PROXY_URI;
+const pattern = /\/rnode\/(.*)\/proxy\//;
+const match = url.match(pattern);
+
 const nextConfig = {
-  assetPrefix: '/rnode/nova21-gpu-3-eth/14340/proxy/3000',
+  assetPrefix: '/rnode/'+match[1]+'/proxy/3000',
   output: 'standalone',
   sassOptions: {
     // includePaths: [path.join(__dirname, 'styles')]
+  },
+  publicRuntimeConfig: {
+    VS_PROXY_PATH: match[1],
   },
   reactStrictMode: false,
   async redirects() {

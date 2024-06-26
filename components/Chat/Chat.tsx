@@ -18,6 +18,9 @@ import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
 
+// import getConfig from 'next/config'
+// import config from '../../next.config'
+
 import './index.scss'
 
 const HTML_REGULAR =
@@ -30,9 +33,19 @@ export interface ChatGPInstance {
   getConversation: () => ChatMessage[]
   focus: () => void
 }
-
+// const { publicRuntimeConfig } = getConfig()
 const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) => {
-  const url = 'https://nova-ondemand.its.iastate.edu/rnode/nova21-gpu-3-eth/14340/proxy/5000/chat'
+  console.log(process.env.VS_CODE_PRXY)
+  var url = '/chat'
+  // HPC config
+  const proxy_url = window.location.href;
+  const pattern = /\/rnode\/(.*)\/proxy\//;
+  if(proxy_url) {
+    const match = proxy_url.match(pattern);
+    if(match) {
+      url = 'https://nova-ondemand.its.iastate.edu/rnode/'+match[1]+'/proxy/5000/chat';
+    }
+  }
 
   const data = {
     prompt: chat?.persona?.prompt,
