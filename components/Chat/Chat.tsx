@@ -39,12 +39,14 @@ const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) =>
   var url = '/chat'
   // HPC config
   const proxy_url = window.location.href;
-  const pattern = /\/rnode\/(.*)\/proxy\//;
+  // const pattern = /\/rnode\/(.*)\/proxy\//;
   if(proxy_url) {
-    const match = proxy_url.match(pattern);
-    if(match) {
-      url = 'https://nova-ondemand.its.iastate.edu/rnode/'+match[1]+'/proxy/5000/chat';
-    }
+    // TODO: replace with server port and endpoint
+    url = proxy_url.replace('3000', '5000')
+    // const match = proxy_url.match(pattern);
+    // if(match) {
+    //   url = 'https://nova-ondemand.its.iastate.edu/rnode/'+match[1]+'/proxy/5000/chat';
+    // }
   }
 
   const data = {
