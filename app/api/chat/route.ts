@@ -89,8 +89,14 @@ const getLocalLLMStream = async (
   //     top_p: 0.95
   //   })
   // })
-  const res = await fetch("http://127.0.0.1:5000/chat", {
-    method: 'GET',
+  // const res = await fetch("https://nova-ondemand.its.iastate.edu/rnode/nova21-gpu-5-eth/50532/proxy/5000/chat", {
+  //   method: 'POST',
+  //   headers: {
+  //     'Accept': 'text/event-stream'
+  //   },
+  // })
+  const res = await fetch("https://localhost:5000/chat", {
+    method: 'POST',
     headers: {
       'Accept': 'text/event-stream'
     },
@@ -98,7 +104,7 @@ const getLocalLLMStream = async (
 
   if (res.status !== 200) {
     const statusText = res.statusText
-    const responseBody = await res.text()
+    const responseBody = await res.text() 
     console.error(`OpenAI API response error: ${responseBody}`)
     throw new Error(
       `The OpenAI API has encountered an error with a status code of ${res.status} ${statusText}: ${responseBody}`
