@@ -17,7 +17,7 @@ const PersonaModal = () => {
     onCreatePersona?.(values as Persona)
   })
 
-  useEffect(() => {
+  useEffect(() => { 
     if (detail) {
       setValue('name', detail.name, { shouldTouch: true })
       setValue('prompt', detail.prompt, { shouldTouch: true })

@@ -7,7 +7,8 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
-  useState
+  useState,
+  useReducer
 } from 'react'
 import { Flex, Heading, IconButton, ScrollArea, Tooltip } from '@radix-ui/themes'
 import ContentEditable from 'react-contenteditable'
@@ -50,8 +51,10 @@ const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) =>
 }
 
 const Chat = (props: ChatProps, ref: any) => {
-  const { debug, currentChatRef, saveMessages, onToggleSidebar, forceUpdate } =
+  const { debug, currentChatRef, saveMessages, onToggleSidebar } =
     useContext(ChatContext)
+  const [, forceUpdate] = useReducer(x => x + 1, 0)
+  const conversation = useRef<ChatMessage[]>([])
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -63,9 +66,24 @@ const Chat = (props: ChatProps, ref: any) => {
 
   const textAreaRef = useRef<HTMLElement>(null)
 
-  const conversation = useRef<ChatMessage[]>([])
-
   const bottomOfChatRef = useRef<HTMLDivElement>(null)
+  const handleAgentResponse = useCallback((response: ChatMessage) => {
+    conversation.current = [...conversation.current, response]
+    forceUpdate()
+  }, [])
+
+
+  const isValidUrl = (string: string) => {
+    if (string.startsWith('/')) {
+      return true;
+    }
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
@@ -82,61 +100,74 @@ const Chat = (props: ChatProps, ref: any) => {
         setMessage('')
         setIsLoading(true)
         try {
-          const response = await postChatOrQuestion(currentChatRef?.current!, message, input)
+          // const response = await postChatOrQuestion(currentChatRef?.current!, message, input)
 
-          if (response.ok) {
-            const data = response.body
+          // if (response.ok) {
+          //   const data = response.body
 
-            if (!data) {
-              throw new Error('No data')
-            }
+          // if (!data) {
+          //   throw new Error('No data')
+          // }
 
-            const reader = data.getReader()
-            const decoder = new TextDecoder('utf-8')
-            let done = false
-            let resultContent = ''
+          // const reader = data.getReader()
+          // const decoder = new TextDecoder('utf-8')
+          // let done = false
+          let resultContent = ''
 
-            while (!done) {
-              try {
-                const { value, done: readerDone } = await reader.read()
-                const char = decoder.decode(value)
-                if (char) {
-                  setCurrentMessage((state) => {
-                    if (debug) {
-                      console.log({ char })
-                    }
-                    resultContent = state + char
-                    return resultContent
-                  })
-                }
-                done = readerDone
-              } catch {
-                done = true
-              }
-            }
-            // The delay of timeout can not be 0 as it will cause the message to not be rendered in racing condition
-            setTimeout(() => {
-              if (debug) {
-                console.log({ resultContent })
-              }
-              conversation.current = [
-                ...conversation.current,
-                { content: resultContent, role: 'assistant' }
-              ]
-
-              setCurrentMessage('')
-            }, 1)
-          } else {
-            const result = await response.json()
-            if (response.status === 401) {
-              conversation.current.pop()
-              location.href =
-                result.redirect +
-                `?callbackUrl=${encodeURIComponent(location.pathname + location.search)}`
-            } else {
-              toast.error(result.error)
-            }
+          // while (!done) {
+          try {
+            // const { value, done: readerDone } = await reader.read()
+            // const char = decoder.decode(value)
+            const char = "/Des_Moines_LowIncome_BlockGroup_Map.html"
+            if (char) {
+              setCurrentMessage((state) => {
+                  if (debug) {
+                      console.log({ char });
+                  }
+                  if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { //check if it is a map
+                      if (isValidUrl(char)) {
+                          var responseContent = char.split(":")[1].trim(); //parsed from char
+                          resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+                      }
+                  } else {
+                      resultContent = state + "How can I help you today?";
+                  }
+                  return resultContent;
+              });
           }
+          
+
+
+
+            // done = readerDone
+          } catch(error) {
+            console.error("Error processing message:", error);
+            // done = true
+          }
+          // }
+          // The delay of timeout can not be 0 as it will cause the message to not be rendered in racing condition
+          setTimeout(() => {
+            if (debug) {
+              console.log({ resultContent })
+            }
+            conversation.current = [
+              ...conversation.current,
+              { content: resultContent, role: 'assistant' }
+            ]
+
+            setCurrentMessage('')
+          }, 1)
+          // } else {
+          //   const result = await response.json()
+          //   if (response.status === 401) {
+          //     conversation.current.pop()
+          //     location.href =
+          //       result.redirect +
+          //       `?callbackUrl=${encodeURIComponent(location.pathname + location.search)}`
+          //   } else {
+          //     toast.error(result.error)
+          //   }
+          // }
 
           setIsLoading(false)
         } catch (error: any) {
@@ -160,8 +191,11 @@ const Chat = (props: ChatProps, ref: any) => {
   )
 
   const clearMessages = () => {
-    conversation.current = []
-    forceUpdate?.()
+    conversation.current = [];
+    forceUpdate?.();
+    setMessage('');
+    setCurrentMessage('');
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -214,7 +248,7 @@ const Chat = (props: ChatProps, ref: any) => {
         px="4"
         style={{ backgroundColor: 'var(--gray-a2)' }}
       >
-        <Heading size="4">{currentChatRef?.current?.persona?.name || 'None'}</Heading>
+        <Heading size="4">Housing & AI</Heading>
       </Flex>
       <ScrollArea
         className="flex-1 px-4"
@@ -223,9 +257,9 @@ const Chat = (props: ChatProps, ref: any) => {
         style={{ height: '100%' }}
       >
         {conversation.current.map((item, index) => (
-          <Message key={index} message={item} />
+          <Message key={index} message={item} onAgentResponse={handleAgentResponse} />
         ))}
-        {currentMessage && <Message message={{ content: currentMessage, role: 'assistant' }} />}
+        {currentMessage && <Message message={{ content: currentMessage, role: 'assistant' }} onAgentResponse={handleAgentResponse} />}
         <div ref={bottomOfChatRef}></div>
       </ScrollArea>
       <div className="px-4 pb-3">
@@ -236,7 +270,8 @@ const Chat = (props: ChatProps, ref: any) => {
               style={{
                 minHeight: '24px',
                 maxHeight: '200px',
-                overflowY: 'auto'
+                overflowY: 'auto',
+
               }}
               className="rt-TextAreaInput text-base"
               html={message}
@@ -306,3 +341,5 @@ const Chat = (props: ChatProps, ref: any) => {
 }
 
 export default forwardRef<ChatGPInstance, ChatProps>(Chat)
+
+

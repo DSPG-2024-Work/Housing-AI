@@ -19,4 +19,4 @@ export interface Chat {
   messages?: ChatMessage[]
 }
 
-export type ChatRole = 'assistant' | 'user' | 'system'
+export type ChatRole = 'assistant' | 'user' | 'system' | 'agent';
