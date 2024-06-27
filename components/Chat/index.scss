@@ -2,9 +2,13 @@
   .rt-TextAreaInput {
     height: 50px;
     @apply py-3 px-4 pr-24;
+    outline: 2px solid #673ab7;
+    box-shadow: 0 0 0 2px #673ab7;
+
     img {
       @apply max-w-md max-md:max-w-full;
     }
+
     table {
       table-layout: fixed;
       width: 100%;
@@ -18,13 +22,13 @@
   background-color: var(--color-background);
   transition: 0.5s;
 
-  @apply max-md:absolute max-md:top-0 max-md:bottom-0   max-md:border-none max-md:w-0;
+  @apply max-md:absolute max-md:top-0 max-md:bottom-0 max-md:border-none max-md:w-0;
 
-  .rt-ScrollAreaViewport > div {
+  .rt-ScrollAreaViewport>div {
     display: block;
   }
 
-  > div {
+  >div {
     border-right: 1px solid var(--gray-a4);
   }
 
@@ -56,10 +60,30 @@
 
 .userMessage {
   table {
-    @apply border-collapse border  border-slate-400;
+    @apply border-collapse border border-slate-400;
+
     th,
     td {
-      @apply border  border-slate-300;
+      @apply border border-slate-300;
     }
   }
+}
+
+.iframe-container {
+  position: relative;
+  width: 96%;
+  overflow: hidden;
+  padding-top: 45.25%;
+  margin: 10px;
+  height: 0;
+}
+
+.iframe-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  margin-left: 0;
 }
