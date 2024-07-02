@@ -15,6 +15,7 @@ import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
 import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
 import { FiSend } from 'react-icons/fi'
+import { FaRegThumbsUp, FaRegThumbsDown } from "react-icons/fa6";
 import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
