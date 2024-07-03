@@ -26,7 +26,7 @@ import './index.scss'
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
-
+// Interface used in a later call to check if class inherited is of ChatProps
 export interface ChatProps { }
 
 // Define a Messaging Instance
