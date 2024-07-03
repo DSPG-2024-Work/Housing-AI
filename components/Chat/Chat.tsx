@@ -20,22 +20,22 @@ import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
 
-// import getConfig from 'next/config'
-// import config from '../../next.config'
-
 import './index.scss'
 
+// Regular expression that will avoid these HTML tags when updating components on the page.
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
 
+
 export interface ChatProps { }
 
+// Define a Messaging Instance
 export interface ChatGPInstance {
   setConversation: (messages: ChatMessage[]) => void
   getConversation: () => ChatMessage[]
   focus: () => void
 }
-// const { publicRuntimeConfig } = getConfig()
+
 const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) => {
   console.log(process.env.VS_CODE_PRXY)
   var url = '/chat'
@@ -236,6 +236,8 @@ const Chat = (props: ChatProps, ref: any) => {
     }
   })
 
+
+  // UI components rendered through JSX Markdown 
   return (
     <Flex direction="column" height="100%" className="relative" gap="3">
       <Flex
