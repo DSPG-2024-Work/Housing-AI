@@ -57,14 +57,19 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/* NEEDS COMMENTS */
-
+/* 
+The following function fetches data from the localhost and if
+the data is accepted in an event stream format, this is parsed
+through the 'ReadableStream' function as long as the event does not
+return [DONE]. 
+*/
 const getLocalLLMStream = async (
   messages: Message[]
 ) => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
+  // Use a POST method to listen for event-stream data
   const res = await fetch("https://localhost:5000/chat", {
     method: 'POST',
     headers: {
@@ -72,7 +77,7 @@ const getLocalLLMStream = async (
     },
   })
 
-  // Checks for whether the connection status is not OK
+  // Checks for whether the connection status is not OK (200 being OK)
   if (res.status !== 200) {
     const statusText = res.statusText
     const responseBody = await res.text() 
@@ -82,6 +87,7 @@ const getLocalLLMStream = async (
     )
   }
 
+  // Parses the incoming data until event type is still an event and the data == '[DONE]'
   return new ReadableStream({
     async start(controller) {
       const onParse = (event: ParsedEvent | ReconnectInterval) => {
@@ -101,6 +107,7 @@ const getLocalLLMStream = async (
         }
       }
 
+      // A parser is created to asynchronously parse the material coming from the POST call 
       const parser = createParser(onParse)
 
       for await (const chunk of res.body as any) {
