@@ -6,6 +6,7 @@ import { HiUser } from 'react-icons/hi'
 import { Markdown } from '@/components'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 import { ChatMessage } from './interface'
+import { FiThumbsDown, FiThumbsUp } from 'react-icons/fi'
 
 export interface MessageProps {
   message: ChatMessage
@@ -49,6 +50,34 @@ const Message = (props: MessageProps) => {
         ) : (
           <Flex direction="column" gap="4">
             <Markdown>{content}</Markdown>
+            
+            <Flex gap='1'>
+              <Tooltip content={"Thumbs Down"}>
+              <IconButton
+                  variant="soft"
+                  // disabled={isToggled} *Implement 
+                  color="gray"
+                  size="2"
+                  className="rounded-xl thumbs-down"
+                  // onClick={sendMessage} *Add JSON file
+                >
+                  <FiThumbsDown />  
+                </IconButton>
+              </Tooltip>
+              <Tooltip content={"Thumbs Up"}>
+                <IconButton
+                  variant="soft"
+                  // disabled={isToggled} *Implement 
+                  color="gray"
+                  size="2"
+                  className="rounded-xl thumbs-up"
+                  // onClick={sendMessage} *Add JSON file
+                >
+                  <FiThumbsUp />  
+                </IconButton>
+              </Tooltip>
+            </Flex>
+
           </Flex>
         )}
       </div>
