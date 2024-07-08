@@ -15,7 +15,7 @@ import ContentEditable from 'react-contenteditable'
 import toast from 'react-hot-toast'
 import { AiOutlineClear, AiOutlineLoading3Quarters, AiOutlineUnorderedList } from 'react-icons/ai'
 import { FiSend } from 'react-icons/fi'
-import { FaRegThumbsUp, FaRegThumbsDown } from "react-icons/fa6";
+import { FaRegThumbsUp, FaRegThumbsDown, FaFileArrowUp } from "react-icons/fa6";
 import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
@@ -306,6 +306,18 @@ const Chat = (props: ChatProps, ref: any) => {
                 onClick={sendMessage}
               >
                 <FiSend className="size-4" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content={"Attach File"}>
+              <IconButton
+                variant="soft"
+                disabled={isLoading}
+                color="gray"
+                size="2"
+                className="rounded-xl FaFileArrowUp"
+                onClick={(e) => {alert("This Feature Needs More Funding")}}
+              >
+                <FaFileArrowUp className="size4"/>
               </IconButton>
             </Tooltip>
             <Tooltip content={'Clear History'}>
