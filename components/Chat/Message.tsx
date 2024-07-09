@@ -28,16 +28,28 @@ const Message = (props: MessageProps) => {
     })
   }, [content, copy])
 
+
+  /* 
+  Rendering the UI components of user and assistant messages. This section only
+  creates the UI elements of each individual text box. The larger div is 
+  part of the Chat.tsx file. 
+  */
   return (
-    <Flex gap="4" className="mb-5">
+    /* 
+    The <Avatar/> section creates an avatar icon which is 
+    pink if it is the "assistant" or
+    undefined otherwise (blue in this case)
+    */
+    <Flex gap="4" className="mb-5">       
       <Avatar
         fallback={<HiUser className="size-4" />}
         color={isUser ? undefined : 'pink'}
         size="2"
         radius="full"
-      />
+      /> 
       <div className="flex-1 pt-1 break-all">
-        {isUser ? (
+        {isUser ? ( // If the message is a user message, then the content of the
+                    // div is replaced by the code below.
           <div
             className="userMessage"
             dangerouslySetInnerHTML={{
@@ -45,9 +57,17 @@ const Message = (props: MessageProps) => {
                 /<(?!\/?br\/?.+?>|\/?img|\/?table|\/?thead|\/?tbody|\/?tr|\/?td|\/?th.+?>)[^<>]*>/gi,
                 ''
               )
-            }}
+            }} 
           ></div>
-        ) : (
+        ) : ( 
+          /*
+          If the message is not from the user, then the message div should
+          contain the contents from {contents} as markdown text. 
+          
+          The nested
+          Flex section is to provide a thumbs up or down feature to rate the
+          reply of the assistant. 
+           */
           <Flex direction="column" gap="4">
             <Markdown>{content}</Markdown>
             

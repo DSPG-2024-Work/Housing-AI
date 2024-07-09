@@ -36,6 +36,10 @@ export interface ChatGPInstance {
   focus: () => void
 }
 
+/* 
+Defines a function which is used to post a question to the 'assistant'. This
+is used in the SendMessage() function created in the const Chat function below.
+*/
 const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) => {
   console.log(process.env.VS_CODE_PRXY)
   var url = '/chat'
@@ -67,6 +71,12 @@ const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) =>
   })
 }
 
+/*
+Defines a chat object which is used to define the behavior and structure of the 
+message exchanges between the 'user' and the 'assistant'. The name of the object
+is the same as the Chat interface in interface.ts but they are not actually
+related.
+*/
 const Chat = (props: ChatProps, ref: any) => {
   const { debug, currentChatRef, saveMessages, onToggleSidebar } =
     useContext(ChatContext)
@@ -95,13 +105,14 @@ const Chat = (props: ChatProps, ref: any) => {
         e.preventDefault()
         const input = textAreaRef.current?.innerHTML?.replace(HTML_REGULAR, '') || ''
 
+        // Error if a message is sent without any text.
         if (input.length < 1) {
           toast.error('Please type a message to continue.')
           return
         }
 
         const message = [...conversation.current]
-        conversation.current = [...conversation.current, { content: input, role: 'user' }]
+        conversation.current = [...conversation.current, { content: input, role: 'user', rating: '' }]
         setMessage('')
         setIsLoading(true)
         try {
@@ -149,7 +160,7 @@ const Chat = (props: ChatProps, ref: any) => {
               }
               conversation.current = [
                 ...conversation.current,
-                { content: resultContent, role: 'assistant' }
+                { content: resultContent, role: 'assistant', rating: 'unchecked'}
               ]
 
               setCurrentMessage('')
@@ -237,7 +248,11 @@ const Chat = (props: ChatProps, ref: any) => {
   })
 
 
-  // UI components rendered through JSX Markdown 
+  /* 
+  UI components of the chat interface. This section corresponds to the main UI
+  face of the application which contains the area for messages and the text input 
+  section of the application located at the bottom.
+  */
   return (
     <Flex direction="column" height="100%" className="relative" gap="3">
       <Flex
@@ -258,7 +273,7 @@ const Chat = (props: ChatProps, ref: any) => {
         {conversation.current.map((item, index) => (
           <Message key={index} message={item} onAgentResponse={handleAgentResponse} />
         ))}
-        {currentMessage && <Message message={{ content: currentMessage, role: 'assistant' }} onAgentResponse={handleAgentResponse} />}
+        {currentMessage && <Message message={{ content: currentMessage, role: 'assistant', rating: 'unchecked' }} onAgentResponse={handleAgentResponse} />}
         <div ref={bottomOfChatRef}></div>
       </ScrollArea>
       <div className="px-4 pb-3">
