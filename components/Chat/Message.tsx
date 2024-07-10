@@ -7,6 +7,7 @@ import { Markdown } from '@/components'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 import { ChatMessage } from './interface'
 import { FiThumbsDown, FiThumbsUp } from 'react-icons/fi'
+import { randomUUID } from 'crypto'
 
 export interface MessageProps {
   message: ChatMessage
@@ -16,7 +17,7 @@ export interface MessageProps {
 const Message = (props: MessageProps) => {
   const { role, content } = props.message;
   const { onAgentResponse } = props;
-  const isUser = role === 'user'
+  const isUser = role === 'assistant'
   const copy = useCopyToClipboard()
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
 
@@ -27,6 +28,12 @@ const Message = (props: MessageProps) => {
       }
     })
   }, [content, copy])
+
+  /* 
+  Create a UUID for each Message generated in a Chat. Used by the thumbs up 
+  and down feature to refer to the message it is updating. 
+  */
+  const message_uuid = self.crypto.randomUUID();
 
 
   /* 
@@ -66,9 +73,10 @@ const Message = (props: MessageProps) => {
           
           The nested
           Flex section is to provide a thumbs up or down feature to rate the
-          reply of the assistant. 
+          reply of the assistant. The `id` of the Flex below is generated as a
+          UUID from variable constructed above.
            */
-          <Flex direction="column" gap="4">
+          <Flex direction="column" gap="4" id={message_uuid}>
             <Markdown>{content}</Markdown>
             
             <Flex gap='1'>
