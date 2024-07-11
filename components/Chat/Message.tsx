@@ -17,7 +17,7 @@ export interface MessageProps {
 const Message = (props: MessageProps) => {
   const { role, content } = props.message;
   const { onAgentResponse } = props;
-  const isUser = role === 'assistant'
+  const isUser = role === 'user'
   const copy = useCopyToClipboard()
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false)
 
@@ -54,7 +54,7 @@ const Message = (props: MessageProps) => {
         size="2"
         radius="full"
       /> 
-      <div className="flex-1 pt-1 break-all">
+      <div className="flex-1 pt-1 break-all" id={message_uuid}>
         {isUser ? ( // If the message is a user message, then the content of the
                     // div is replaced by the code below.
           <div
@@ -76,7 +76,7 @@ const Message = (props: MessageProps) => {
           reply of the assistant. The `id` of the Flex below is generated as a
           UUID from variable constructed above.
            */
-          <Flex direction="column" gap="4" id={message_uuid}>
+          <Flex direction="column" gap="4">
             <Markdown>{content}</Markdown>
             
             <Flex gap='1'>
