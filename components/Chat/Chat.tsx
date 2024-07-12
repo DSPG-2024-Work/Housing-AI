@@ -88,18 +88,6 @@ const Chat = (props: ChatProps, ref: any) => {
     forceUpdate()
   }, [])
 
-
-  const isValidUrl = (string: string) => {
-    if (string.startsWith('/')) {
-      return true;
-    }
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
@@ -116,74 +104,66 @@ const Chat = (props: ChatProps, ref: any) => {
         setMessage('')
         setIsLoading(true)
         try {
-          // const response = await postChatOrQuestion(currentChatRef?.current!, message, input)
+          const response = await postChatOrQuestion(currentChatRef?.current!, message, input)
 
-          // if (response.ok) {
-          //   const data = response.body
+          if (response.ok) {
+            const data = response.body
 
-          // if (!data) {
-          //   throw new Error('No data')
-          // }
-
-          // const reader = data.getReader()
-          // const decoder = new TextDecoder('utf-8')
-          // let done = false
-          let resultContent = ''
-
-          // while (!done) {
-          try {
-            // const { value, done: readerDone } = await reader.read()
-            // const char = decoder.decode(value)
-            const char = "Des_Moines_LowIncome_BlockGroup_Map"
-            if (char) {
-              setCurrentMessage((state) => {
-                  if (debug) {
-                      console.log({ char });
-                  }
-                  if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { //check if it is a map
-                      if (isValidUrl(char)) {
-                        var responseContent = char.replace('map : ', '').trim();
-                          resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
-                      }
-                  } else {
-                      resultContent = state + "How can I help you today?";
-                  }
-                  return resultContent;
-              });
-          }
-          
-
-
-
-            // done = readerDone
-          } catch(error) {
-            console.error("Error processing message:", error);
-            // done = true
-          }
-          // }
-          // The delay of timeout can not be 0 as it will cause the message to not be rendered in racing condition
-          setTimeout(() => {
-            if (debug) {
-              console.log({ resultContent })
+            if (!data) {
+              throw new Error('No data')
             }
-            conversation.current = [
-              ...conversation.current,
-              { content: resultContent, role: 'assistant' }
-            ]
 
-            setCurrentMessage('')
-          }, 1)
-          // } else {
-          //   const result = await response.json()
-          //   if (response.status === 401) {
-          //     conversation.current.pop()
-          //     location.href =
-          //       result.redirect +
-          //       `?callbackUrl=${encodeURIComponent(location.pathname + location.search)}`
-          //   } else {
-          //     toast.error(result.error)
-          //   }
-          // }
+            const reader = data.getReader()
+            const decoder = new TextDecoder('utf-8')
+            let done = false
+            let resultContent = ''
+
+            while (!done) {
+              try {
+                const { value, done: readerDone } = await reader.read()
+                const char = decoder.decode(value)
+                if (char) {
+                  setCurrentMessage((state) => {
+                    if (debug) {
+                      console.log({ char })
+                    }
+                    if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { 
+                        var responseContent = char.replace('map : ', '').trim();
+                        resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+                    } else {
+                        resultContent = state + char;
+                    }
+                    return resultContent;
+                  })
+                }
+                done = readerDone
+              } catch {
+                done = true
+              }
+            }
+            // The delay of timeout can not be 0 as it will cause the message to not be rendered in racing condition
+            setTimeout(() => {
+              if (debug) {
+                console.log({ resultContent })
+              }
+              conversation.current = [
+                ...conversation.current,
+                { content: resultContent, role: 'assistant' }
+              ]
+
+              setCurrentMessage('')
+            }, 1)
+          } else {
+            const result = await response.json()
+            if (response.status === 401) {
+              conversation.current.pop()
+              location.href =
+                result.redirect +
+                `?callbackUrl=${encodeURIComponent(location.pathname + location.search)}`
+            } else {
+              toast.error(result.error)
+            }
+          }
 
           setIsLoading(false)
         } catch (error: any) {
