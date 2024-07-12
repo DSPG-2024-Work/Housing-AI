@@ -19,6 +19,9 @@ import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
 
+// import getConfig from 'next/config'
+// import config from '../../next.config'
+
 import './index.scss'
 
 const HTML_REGULAR =
@@ -31,9 +34,21 @@ export interface ChatGPInstance {
   getConversation: () => ChatMessage[]
   focus: () => void
 }
-
+// const { publicRuntimeConfig } = getConfig()
 const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) => {
-  const url = '/api/chat'
+  console.log(process.env.VS_CODE_PRXY)
+  var url = '/chat'
+  // HPC config
+  const proxy_url = window.location.href;
+  // const pattern = /\/rnode\/(.*)\/proxy\//;
+  if(proxy_url) {
+    // TODO: replace with server port and endpoint
+    url = proxy_url.replace('3000', '5000')
+    // const match = proxy_url.match(pattern);
+    // if(match) {
+    //   url = 'https://nova-ondemand.its.iastate.edu/rnode/'+match[1]+'/proxy/5000/chat';
+    // }
+  }
 
   const data = {
     prompt: chat?.persona?.prompt,
@@ -44,7 +59,8 @@ const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) =>
   return await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'accept': 'text/event-stream'
     },
     body: JSON.stringify(data)
   })
@@ -118,7 +134,7 @@ const Chat = (props: ChatProps, ref: any) => {
           try {
             // const { value, done: readerDone } = await reader.read()
             // const char = decoder.decode(value)
-            const char = "/Des_Moines_LowIncome_BlockGroup_Map.html"
+            const char = "Des_Moines_LowIncome_BlockGroup_Map"
             if (char) {
               setCurrentMessage((state) => {
                   if (debug) {
@@ -126,7 +142,7 @@ const Chat = (props: ChatProps, ref: any) => {
                   }
                   if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { //check if it is a map
                       if (isValidUrl(char)) {
-                          var responseContent = char.split(":")[1].trim(); //parsed from char
+                        var responseContent = char.replace('map : ', '').trim();
                           resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
                       }
                   } else {
@@ -341,5 +357,6 @@ const Chat = (props: ChatProps, ref: any) => {
 }
 
 export default forwardRef<ChatGPInstance, ChatProps>(Chat)
+
 
 

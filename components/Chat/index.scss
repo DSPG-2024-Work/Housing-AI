@@ -87,3 +87,9 @@
   border: 0;
   margin-left: 0;
 }
+
+.chart-side-bar .truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
