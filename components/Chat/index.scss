@@ -93,3 +93,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.text-container {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}

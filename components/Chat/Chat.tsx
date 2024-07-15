@@ -19,9 +19,6 @@ import ChatContext from './chatContext'
 import type { Chat, ChatMessage } from './interface'
 import Message from './Message'
 
-// import getConfig from 'next/config'
-// import config from '../../next.config'
-
 import './index.scss'
 
 const HTML_REGULAR =
@@ -34,20 +31,13 @@ export interface ChatGPInstance {
   getConversation: () => ChatMessage[]
   focus: () => void
 }
-// const { publicRuntimeConfig } = getConfig()
+
 const postChatOrQuestion = async (chat: Chat, messages: any[], input: string) => {
   console.log(process.env.VS_CODE_PRXY)
   var url = '/chat'
-  // HPC config
   const proxy_url = window.location.href;
-  // const pattern = /\/rnode\/(.*)\/proxy\//;
   if(proxy_url) {
-    // TODO: replace with server port and endpoint
     url = proxy_url.replace('3000', '5000')
-    // const match = proxy_url.match(pattern);
-    // if(match) {
-    //   url = 'https://nova-ondemand.its.iastate.edu/rnode/'+match[1]+'/proxy/5000/chat';
-    // }
   }
 
   const data = {
@@ -83,11 +73,11 @@ const Chat = (props: ChatProps, ref: any) => {
   const textAreaRef = useRef<HTMLElement>(null)
 
   const bottomOfChatRef = useRef<HTMLDivElement>(null)
+
   const handleAgentResponse = useCallback((response: ChatMessage) => {
     conversation.current = [...conversation.current, response]
     forceUpdate()
   }, [])
-
 
   const isValidUrl = (string: string) => {
     if (string.startsWith('/')) {
@@ -100,6 +90,7 @@ const Chat = (props: ChatProps, ref: any) => {
       return false;
     }
   }
+
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
@@ -116,52 +107,52 @@ const Chat = (props: ChatProps, ref: any) => {
         setMessage('')
         setIsLoading(true)
         try {
-          // const response = await postChatOrQuestion(currentChatRef?.current!, message, input)
-
-          // if (response.ok) {
-          //   const data = response.body
-
-          // if (!data) {
-          //   throw new Error('No data')
-          // }
-
-          // const reader = data.getReader()
-          // const decoder = new TextDecoder('utf-8')
-          // let done = false
           let resultContent = ''
 
-          // while (!done) {
           try {
-            // const { value, done: readerDone } = await reader.read()
-            // const char = decoder.decode(value)
-            const char = "Des_Moines_LowIncome_BlockGroup_Map"
+            const char = "/Des_Moines_LowIncome_BlockGroup_Map.html"
             if (char) {
               setCurrentMessage((state) => {
-                  if (debug) {
-                      console.log({ char });
-                  }
-                  if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { //check if it is a map
-                      if (isValidUrl(char)) {
-                        var responseContent = char.replace('map : ', '').trim();
-                          resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
-                      }
-                  } else {
-                      resultContent = state + "How can I help you today?";
-                  }
-                  return resultContent;
+                if (debug) {
+                  console.log({ char });
+                }
+
+                // // 1. text and map
+                // resultContent = state + `<div class="text-container">Here is the map you requested. This map highlights low-income block groups in Des Moines, providing a visual representation of areas with higher concentrations of low-income households. Understanding the distribution of these areas can be crucial for urban planning, resource allocation, and community development efforts. By analyzing this map, stakeholders can identify specific neighborhoods that may benefit from targeted interventions and support.</div>`;
+                // if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { 
+                //   if (isValidUrl(char)) {
+                //     var responseContent = char.replace('map : ', '').trim();
+                //     resultContent += `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+                //   }
+                // }
+
+                // 2. map and text
+                // if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { 
+                //   if (isValidUrl(char)) {
+                //     var responseContent = char.replace('map : ', '').trim();
+                //     resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+                //   }
+                // } 
+                // resultContent += `<div class="text-container">This map highlights low-income block groups in Des Moines, providing a visual representation of areas with higher concentrations of low-income households. Understanding the distribution of these areas can be crucial for urban planning, resource allocation, and community development efforts. By analyzing this map, stakeholders can identify specific neighborhoods that may benefit from targeted interventions and support.</div>`;
+
+                // 3. Only text
+                resultContent = state + `<div class="text-container">The Rural Housing Readiness Assessment program is a multi-stage process aimed at developing a coherent, realistic, and well-reasoned housing strategy for a community. The process involves several stages, including pre-meeting organizing, an educational workshop, a community survey, the creation of a final report, action planning, and team formation to meet goals. This comprehensive approach enables the development of an effective action plan to improve housing in the community, focusing on aspects such as availability, affordability, and quality.</div>`;
+                
+                // 4. Only map
+                // if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { 
+                //   if (isValidUrl(char)) {
+                //     var responseContent = char.replace('map : ', '').trim();
+                //     resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+                //   }
+                // }
+
+                return resultContent;
               });
-          }
-          
+            }
 
-
-
-            // done = readerDone
-          } catch(error) {
+          } catch (error) {
             console.error("Error processing message:", error);
-            // done = true
           }
-          // }
-          // The delay of timeout can not be 0 as it will cause the message to not be rendered in racing condition
           setTimeout(() => {
             if (debug) {
               console.log({ resultContent })
@@ -173,17 +164,6 @@ const Chat = (props: ChatProps, ref: any) => {
 
             setCurrentMessage('')
           }, 1)
-          // } else {
-          //   const result = await response.json()
-          //   if (response.status === 401) {
-          //     conversation.current.pop()
-          //     location.href =
-          //       result.redirect +
-          //       `?callbackUrl=${encodeURIComponent(location.pathname + location.search)}`
-          //   } else {
-          //     toast.error(result.error)
-          //   }
-          // }
 
           setIsLoading(false)
         } catch (error: any) {
@@ -357,6 +337,4 @@ const Chat = (props: ChatProps, ref: any) => {
 }
 
 export default forwardRef<ChatGPInstance, ChatProps>(Chat)
-
-
 
