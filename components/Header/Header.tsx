@@ -34,7 +34,7 @@ export const Header = () => {
             size="2"
             radius="full"
             fallback={
-              <Link href="https://github.com/DSPG-2024-Work/Housing-AI">
+              <Link href="https://github.com/DSPG-2024-Work/Housing-AI/issues/new">
                 <FaGithub />
               </Link>
             }
