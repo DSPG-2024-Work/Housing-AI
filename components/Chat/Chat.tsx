@@ -90,6 +90,7 @@ const Chat = (props: ChatProps, ref: any) => {
       return false;
     }
   }
+
   const sendMessage = useCallback(
     async (e: any) => {
       if (!isLoading) {
@@ -109,32 +110,48 @@ const Chat = (props: ChatProps, ref: any) => {
           let resultContent = ''
 
           try {
-
-            const char = "Des_Moines_LowIncome_BlockGroup_Map"
+            const char = "/Des_Moines_LowIncome_BlockGroup_Map.html"
             if (char) {
               setCurrentMessage((state) => {
-                  if (debug) {
-                      console.log({ char });
+                if (debug) {
+                  console.log({ char });
+                }
+
+                // // 1. text and map
+                // resultContent = state + `<div class="text-container">Here is the map you requested. This map highlights low-income block groups in Des Moines, providing a visual representation of areas with higher concentrations of low-income households. Understanding the distribution of these areas can be crucial for urban planning, resource allocation, and community development efforts. By analyzing this map, stakeholders can identify specific neighborhoods that may benefit from targeted interventions and support.</div>`;
+                // if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { 
+                //   if (isValidUrl(char)) {
+                //     var responseContent = char.replace('map : ', '').trim();
+                //     resultContent += `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+                //   }
+                // }
+
+                // 2. map and text
+                if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { 
+                  if (isValidUrl(char)) {
+                    var responseContent = char.replace('map : ', '').trim();
+                    resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
                   }
-                  if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { //check if it is a map
-                      if (isValidUrl(char)) {
-                        var responseContent = char.replace('map : ', '').trim();
-                          resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
-                      }
-                  } else {
-                      resultContent = state + "How can I help you today?";
-                  }
-                  return resultContent;
+                } 
+                resultContent += `<div class="text-container">This map highlights low-income block groups in Des Moines, providing a visual representation of areas with higher concentrations of low-income households. Understanding the distribution of these areas can be crucial for urban planning, resource allocation, and community development efforts. By analyzing this map, stakeholders can identify specific neighborhoods that may benefit from targeted interventions and support.</div>`;
+
+                // 3. Only text
+                // resultContent = state + `<div class="text-container">The Rural Housing Readiness Assessment program is a multi-stage process aimed at developing a coherent, realistic, and well-reasoned housing strategy for a community. The process involves several stages, including pre-meeting organizing, an educational workshop, a community survey, the creation of a final report, action planning, and team formation to meet goals. This comprehensive approach enables the development of an effective action plan to improve housing in the community, focusing on aspects such as availability, affordability, and quality.</div>`;
+                
+                // 4. Only map
+                // if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { 
+                //   if (isValidUrl(char)) {
+                //     var responseContent = char.replace('map : ', '').trim();
+                //     resultContent = state + `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+                //   }
+                // }
+
+                return resultContent;
               });
-          }
-          
+            }
 
-
-
-            // done = readerDone
-          } catch(error) {
+          } catch (error) {
             console.error("Error processing message:", error);
-            // done = true
           }
           setTimeout(() => {
             if (debug) {
@@ -147,7 +164,6 @@ const Chat = (props: ChatProps, ref: any) => {
 
             setCurrentMessage('')
           }, 1)
- 
 
           setIsLoading(false)
         } catch (error: any) {
@@ -321,4 +337,5 @@ const Chat = (props: ChatProps, ref: any) => {
 }
 
 export default forwardRef<ChatGPInstance, ChatProps>(Chat)
+
 
