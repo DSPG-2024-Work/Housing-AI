@@ -88,12 +88,6 @@
   margin-left: 0;
 }
 
-// .chart-side-bar .truncate {
-//   white-space: nowrap;
-//   overflow: hidden;
-//   text-overflow: ellipsis;
-// }
-
 .text-container {
   word-wrap: break-word;
   white-space: pre-wrap;
@@ -104,3 +98,57 @@
   color: rgb(245, 108, 183);
   text-decoration: underline;
 }
+
+
+:root {
+  --popup-background-light: #ffffff;
+  --popup-background-dark: rgba(0, 0, 0, 0.9);
+
+  --popup-background: var(--popup-background-light); 
+  --popup-color: var(--color-text);
+}
+
+[data-theme="light"] {
+  --popup-background: var(--popup-background-light);
+  --popup-color: #000000;
+}
+
+[data-theme="dark"] {
+  --popup-background: var(--popup-background-dark);
+  --popup-color: #ffffff;
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  background-color: var(--popup-background);
+  color: var(--popup-color) ;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-suggestion {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.autocomplete-suggestion:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-suggestion:active {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.suggestion-divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 4px 0;
+}
+
+
+
