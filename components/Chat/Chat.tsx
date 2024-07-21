@@ -52,12 +52,15 @@ const truncateText = (text: string, maxLength: number): string => {
   return text.substring(0, maxLength) + '...';
 };
 
+
 const Chat = (props: ChatProps, ref: any) => {
   const { debug, currentChatRef, saveMessages, onToggleSidebar } = useContext(ChatContext);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const conversation = useRef<ChatMessage[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false); // State for lightbox
 
   const conversationRef = useRef<ChatMessage[]>();
 
@@ -137,9 +140,30 @@ const Chat = (props: ChatProps, ref: any) => {
               if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) {
                 if (isValidUrl(char)) {
                   var responseContent = char.replace('map : ', '').trim();
-                  resultContent += `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+                  resultContent += `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe>`;
+                  resultContent += `<button id="expand-map" class="expand-button">Expand</button></div>`;
+
                 }
               }
+
+              // // 1. text and map
+              // resultContent = state + `<div class="text-container">Here is the map you requested. This map highlights low-income block groups in Des Moines, providing a visual representation of areas with higher concentrations of low-income households. Understanding the distribution of these areas can be crucial for urban planning, resource allocation, and community development efforts. By analyzing this map, stakeholders can identify specific neighborhoods that may benefit from targeted interventions and support.</div>`;
+              // if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) {
+              //   if (isValidUrl(char)) {
+              //     var responseContent = char.replace('map : ', '').trim();
+              //     resultContent += `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe>`;
+              //     resultContent += `<button class="expand-button" onclick="window.parent.postMessage('expandMap', '*')">Expand</button></div>`;
+              //   }
+              // }
+
+              // 1. text and map
+              // resultContent = state + `<div class="text-container">Here is the map you requested. This map highlights low-income block groups in Des Moines, providing a visual representation of areas with higher concentrations of low-income households. Understanding the distribution of these areas can be crucial for urban planning, resource allocation, and community development efforts. By analyzing this map, stakeholders can identify specific neighborhoods that may benefit from targeted interventions and support.</div>`;
+              // if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) {
+              //   if (isValidUrl(char)) {
+              //     var responseContent = char.replace('map : ', '').trim();
+              //     resultContent += `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe></div>`;
+              //   }
+              // }
 
               // 2. map and text
               // if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) { 
@@ -264,6 +288,50 @@ const Chat = (props: ChatProps, ref: any) => {
       root.removeAttribute('data-theme');
     }
   }, [theme]);
+
+  useEffect(() => {
+    const handleExpandButtonClick = () => {
+      setIsLightboxOpen(true);
+    };
+    document.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      if (target && target.id === 'expand-map') {
+        handleExpandButtonClick();
+      }
+    });
+
+    return () => {
+      document.removeEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        if (target && target.id === 'expand-map') {
+          handleExpandButtonClick();
+        }
+      });
+    };
+  }, []);
+
+
+  // Lightbox component
+  const Lightbox = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="lightbox">
+        <div className="lightbox-content">
+          <iframe
+            src="/Des_Moines_LowIncome_BlockGroup_Map.html"
+            frameBorder="0"
+            width="100%"
+            height="100%"
+            style={{ position: 'relative', zIndex: 9999 }} // Ensure iframe is above other content
+          />
+          <button className="lightbox-close" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  };
 
 
   return (
@@ -394,11 +462,14 @@ const Chat = (props: ChatProps, ref: any) => {
           </Flex>
         </Flex>
       </div>
+      <Lightbox isOpen={isLightboxOpen} onClose={() => setIsLightboxOpen(false)} />
     </Flex>
   );
 };
 
 export default forwardRef<ChatGPInstance, ChatProps>(Chat);
+
+
 
 
 
