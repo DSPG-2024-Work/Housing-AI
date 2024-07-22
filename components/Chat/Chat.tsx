@@ -146,15 +146,14 @@ const Chat = (props: ChatProps, ref: any) => {
                     if (debug) {
                       console.log({ char })
                     }
-                    if (char.includes('/maps/') || char.endsWith('.html') || char.startsWith('/')) {
-                      if (isValidUrl(char)) {
-                        var responseContent = char.replace('map : ', '').trim();
-                        resultContent += `<div class="iframe-container"><iframe src="${responseContent}" frameborder="0"></iframe>`;
-                        resultContent += `<button id="expand-map" class="expand-button">Expand</button></div>`;
-      
-                      }
+                    
+                    let parts = char.split('map :');
+                    if (parts.length > 1) {
+                      resultContent += parts[0] + "\n";
+                      resultContent += `<div class="iframe-container"><iframe src="${parts[1].trim()}" frameborder="0"></iframe>`;
+                      resultContent += `<button id="expand-map" class="expand-button">Expand</button></div>`;
                     } else {
-                        resultContent = state + char;
+                      resultContent = state + char;
                     }
                     return resultContent;
                   })
