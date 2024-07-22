@@ -1,6 +1,7 @@
 export interface ChatMessage {
   content: string
   role: ChatRole
+  sourceLink?: string
 }
 
 export interface Persona {
@@ -17,6 +18,9 @@ export interface Chat {
   id: string
   persona?: Persona
   messages?: ChatMessage[]
+  summary?: string
 }
 
 export type ChatRole = 'assistant' | 'user' | 'system' | 'agent';
+
+

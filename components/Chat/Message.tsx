@@ -13,7 +13,7 @@ export interface MessageProps {
 }
 
 const Message = (props: MessageProps) => {
-  const { role, content } = props.message;
+  const { role, content, sourceLink } = props.message;
   const { onAgentResponse } = props;
   const isUser = role === 'user'
   const copy = useCopyToClipboard()
@@ -49,6 +49,14 @@ const Message = (props: MessageProps) => {
         ) : (
           <Flex direction="column" gap="4">
             <Markdown>{content}</Markdown>
+            {sourceLink &&(
+              <div
+               dangerouslySetInnerHTML={{
+                __html: `Source: <a href="${sourceLink}" target="_blank"
+                class="source-link">${sourceLink}</a>`
+               }}
+               ></div>
+            )}
           </Flex>
         )}
       </div>
@@ -57,5 +65,9 @@ const Message = (props: MessageProps) => {
 }
 
 export default Message
+
+
+
+
 
 

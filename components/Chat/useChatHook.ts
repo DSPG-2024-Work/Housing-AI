@@ -77,6 +77,8 @@ const useChatHook = () => {
 
   const [toggleSidebar, setToggleSidebar] = useState<boolean>(false)
 
+  const chatCounterRef = useRef<number>(1); // Counter for chat numbers
+
   const onOpenPersonaPanel = (type: string = 'chat') => {
     setPersonaPanelType(type)
     setOpenPersonaPanel(true)
@@ -84,7 +86,7 @@ const useChatHook = () => {
 
   const onClosePersonaPanel = useCallback(() => {
     setOpenPersonaPanel(false)
-  }, [setOpenPersonaPanel])
+  }, [])
 
   const onOpenPersonaModal = () => {
     setIsOpenPersonaModal(true)
@@ -103,15 +105,26 @@ const useChatHook = () => {
     messagesMap.current.set(currentChatRef.current?.id!, oldMessages)
     currentChatRef.current = chat
     forceUpdate()
-  }, [])
+  }, [forceUpdate])
 
   const onCreateChat = useCallback(
     (persona: Persona) => {
       const id = uuid()
       const newChat: Chat = {
         id,
-        persona: persona
+        persona: persona,
+        messages: [] // Initialize an empty messages array for each new chat
       }
+
+  // const onCreateChat = useCallback(
+  //   (persona: Persona) => {
+  //     const chatNumber = chatCounterRef.current++;
+  //     const id = uuid()
+  //     const newChat: Chat = {
+  //       id,
+  //       persona: { ...persona, name: `Housing & AI Chat ${chatNumber}` },
+  //       messages: [] // Initialize an empty messages array for each new chat
+  //     }
 
       setChatList((state) => {
         return [...state, newChat]
@@ -138,6 +151,7 @@ const useChatHook = () => {
     if (chatList.length === 0) {
       onOpenPersonaPanel('chat')
     }
+    forceUpdate() // Ensure the state update is propagated
   }
 
   const onCreatePersona = async (values: any) => {
@@ -189,13 +203,19 @@ const useChatHook = () => {
     })
   }
 
-  const saveMessages = (messages: ChatMessage[]) => {
+  const saveMessages = useCallback((messages: ChatMessage[]) => {
     if (messages.length > 0) {
       localStorage.setItem(`ms_${currentChatRef.current?.id}`, JSON.stringify(messages))
     } else {
       localStorage.removeItem(`ms_${currentChatRef.current?.id}`)
     }
-  }
+    // Update the chat list to reflect changes in the messages (for the first message preview)
+    setChatList((prevChatList) => {
+      return prevChatList.map(chat => 
+        chat.id === currentChatRef.current?.id ? { ...chat, messages } : chat
+      );
+    })
+  }, [currentChatRef])
 
   useEffect(() => {
     const chatList = (JSON.parse(localStorage.getItem(StorageKeys.Chat_List) || '[]') ||
@@ -208,6 +228,7 @@ const useChatHook = () => {
       chatList.forEach((chat) => {
         const messages = JSON.parse(localStorage.getItem(`ms_${chat?.id}`) || '[]') as ChatMessage[]
         messagesMap.current.set(chat.id!, messages)
+        chat.messages = messages // Initialize chat messages from localStorage
       })
 
       onChangeChat(currentChat || chatList[0])
@@ -219,7 +240,7 @@ const useChatHook = () => {
       document.body.removeAttribute('style')
       localStorage.setItem(StorageKeys.Chat_List, JSON.stringify(chatList))
     }
-  }, [])
+  }, [onChangeChat, onCreateChat])
 
   useEffect(() => {
     if (currentChatRef.current?.id) {
@@ -283,3 +304,8 @@ const useChatHook = () => {
 }
 
 export default useChatHook
+
+
+
+
+
