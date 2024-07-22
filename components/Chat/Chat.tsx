@@ -23,6 +23,7 @@ import Message from './Message'
 // import config from '../../next.config'
 
 import './index.scss'
+import { createParser, ParsedEvent, ReconnectInterval } from 'eventsource-parser'
 
 const HTML_REGULAR =
   /<(?!img|table|\/table|thead|\/thead|tbody|\/tbody|tr|\/tr|td|\/td|th|\/th|br|\/br).*?>/gi
@@ -105,7 +106,6 @@ const Chat = (props: ChatProps, ref: any) => {
         setIsLoading(true)
         try {
           const response = await postChatOrQuestion(currentChatRef?.current!, message, input)
-
           if (response.ok) {
             const data = response.body
 
@@ -117,7 +117,6 @@ const Chat = (props: ChatProps, ref: any) => {
             const decoder = new TextDecoder('utf-8')
             let done = false
             let resultContent = ''
-
             while (!done) {
               try {
                 const { value, done: readerDone } = await reader.read()

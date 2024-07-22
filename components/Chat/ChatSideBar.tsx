@@ -34,7 +34,7 @@ function generateChatSummary(messages: ChatMessage[]): { summary: string, agentR
     } else if (lastAgentMessage.content.includes('<img')) {
       agentResponse = "Image";
     } else {
-      agentResponse = "Text";
+      agentResponse = `${lastAgentMessage.content.replace(/&nbsp;/g, ' ').trim().substring(0, 25)}...`;
     }
   }
 
