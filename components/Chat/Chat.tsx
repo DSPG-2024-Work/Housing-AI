@@ -60,7 +60,8 @@ const Chat = (props: ChatProps, ref: any) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false); // State for lightbox
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);// State for lightbox
+  const [lightBoxURL, setIsLightBoxURL] = useState(""); 
 
   const conversationRef = useRef<ChatMessage[]>();
 
@@ -86,18 +87,6 @@ const Chat = (props: ChatProps, ref: any) => {
 
     forceUpdate();
   }, []);
-
-  const isValidUrl = (string: string) => {
-    if (string.startsWith('/')) {
-      return true;
-    }
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  };
 
   const fetchSuggestions = useCallback(async (input: string) => {
     const mockSuggestions = ['Housing & AI:Can you Generate a map', 'Housing & AI:What is RHRA program?', 'Housing & AI:Provide some source', 'Hello', 'To make only the text on your screen larger, adjust the slider next to Text size.', 'To make only the text on your screen larger, adjust the slider next to Text size. To make everything larger, including images and apps, select Display, and then choose an option from the drop-down menu next to Scale.'];
@@ -279,6 +268,12 @@ const Chat = (props: ChatProps, ref: any) => {
       const target = event.target as HTMLElement;
       if (target && target.id === 'expand-map') {
         handleExpandButtonClick();
+        // WARNING : iframe is previous to the expand button in layout
+        let mapUrl = ""
+        if(target?.previousElementSibling) {
+          mapUrl = target?.previousElementSibling?.getAttribute('src');
+        }
+        setIsLightBoxURL(mapUrl)
       }
     });
 
@@ -294,14 +289,14 @@ const Chat = (props: ChatProps, ref: any) => {
 
 
   // Lightbox component
-  const Lightbox = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const Lightbox = ({ isOpen, onClose, url }: { isOpen: boolean; onClose: () => void, url:string }) => {
     if (!isOpen) return null;
 
     return (
       <div className="lightbox">
         <div className="lightbox-content">
           <iframe
-            src="/Des_Moines_LowIncome_BlockGroup_Map.html"
+            src={url}
             frameBorder="0"
             width="100%"
             height="100%"
@@ -444,7 +439,7 @@ const Chat = (props: ChatProps, ref: any) => {
           </Flex>
         </Flex>
       </div>
-      <Lightbox isOpen={isLightboxOpen} onClose={() => setIsLightboxOpen(false)} />
+      <Lightbox isOpen={isLightboxOpen} onClose={() => setIsLightboxOpen(false)} url={lightBoxURL} />
     </Flex>
   );
 };
