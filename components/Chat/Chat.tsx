@@ -91,8 +91,8 @@ const Chat = (props: ChatProps, ref: any) => {
   const fetchSuggestions = useCallback(async (input: string) => {
     const mockSuggestions = ['Housing & AI:Can you Generate a map', 'Housing & AI:What is RHRA program?', 'Housing & AI:Provide some source', 'Hello', 'To make only the text on your screen larger, adjust the slider next to Text size.', 'To make only the text on your screen larger, adjust the slider next to Text size. To make everything larger, including images and apps, select Display, and then choose an option from the drop-down menu next to Scale.'];
     const filteredSuggestions = mockSuggestions.filter((s) => s.toLowerCase().includes(input.toLowerCase()));
-    setSuggestions(filteredSuggestions);
-    setShowSuggestions(filteredSuggestions.length > 0);
+    // setSuggestions(filteredSuggestions);
+    // setShowSuggestions(filteredSuggestions.length > 0);
   }, []);
 
 
@@ -125,7 +125,7 @@ const Chat = (props: ChatProps, ref: any) => {
             const decoder = new TextDecoder('utf-8')
             let done = false
             let resultContent = ''
-
+            let sourceLink = ''
             while (!done) {
               try {
                 const { value, done: readerDone } = await reader.read()
@@ -136,11 +136,35 @@ const Chat = (props: ChatProps, ref: any) => {
                       console.log({ char })
                     }
                     
-                    let parts = char.split('map :');
+                    let parts = char.split('||links ');
                     if (parts.length > 1) {
+                      
                       resultContent += parts[0] + "\n";
-                      resultContent += `<div class="iframe-container"><iframe src="${parts[1].trim()}" frameborder="0"></iframe>`;
-                      resultContent += `<button id="expand-map" class="expand-button">Expand</button></div>`;
+                      try {
+                        const links:string = parts[1].replaceAll("'", '"');
+                        const linksJSON:any = JSON.parse(links)
+                        if('map_link' in linksJSON) { 
+                          resultContent += `<div class="iframe-container"><iframe src="${linksJSON['map_link']}" frameborder="0"></iframe>`;
+                          resultContent += `<button id="expand-map" class="expand-button">Expand</button></div>`;
+                        } else if (('sattelite_image' in linksJSON)) {
+                          resultContent += ` <div style="display: flex; justify-content: space-between;">
+                                                <div style="text-align: center; max-width: 48%;">
+                                                    <img id="expand-map" src="${linksJSON['sattelite_image']}?${Date.now()}" alt="Sattelite image" style="width: 100%; height: auto;">
+                                                    <div style="margin-top: 8px; font-size: 14px; color: #555;">Sattelite image</div>
+                                                </div>
+                                                <div style="text-align: center; max-width: 48%;">
+                                                    <img id="expand-map" src="${linksJSON['sattelite_image_with_mask']}?${Date.now()}" alt="Sattelite image with mask" style="width: 100%; height: auto;">
+                                                    <div style="margin-top: 8px; font-size: 14px; color: #555;">Sattelite image with housing mask</div>
+                                                </div>
+                                            </div>`
+                        } 
+                        if ('src' in linksJSON) {
+                          sourceLink = linksJSON['src']
+                        }
+                      } catch (error) {
+                        // silent exit, don't show the map
+                        console.log(error)
+                      }
                     } else {
                       resultContent = state + char;
                     }
@@ -153,7 +177,7 @@ const Chat = (props: ChatProps, ref: any) => {
               }
             }
             // The delay of timeout can not be 0 as it will cause the message to not be rendered in racing condition
-            const sourceLink = 'https'
+            
             setTimeout(() => {
               if (debug) {
                 console.log({ resultContent })
@@ -268,11 +292,15 @@ const Chat = (props: ChatProps, ref: any) => {
       const target = event.target as HTMLElement;
       if (target && target.id === 'expand-map') {
         handleExpandButtonClick();
-        // WARNING : iframe is previous to the expand button in layout
-        let mapUrl = ""
-        if(target?.previousElementSibling) {
-          mapUrl = target?.previousElementSibling?.getAttribute('src');
+        let mapUrl:any = ""
+        if(target instanceof HTMLImageElement) {
+          mapUrl = target.src
+        } else {
+          if(target?.previousElementSibling) {
+            mapUrl = target.previousElementSibling?.getAttribute('src');
+          }
         }
+        // WARNING : iframe is previous to the expand button in layout
         setIsLightBoxURL(mapUrl)
       }
     });
