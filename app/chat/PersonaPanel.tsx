@@ -41,7 +41,7 @@ const PersonaPanel = (_props: PersonaPanelProps) => {
         px="4"
         style={{ backgroundColor: 'var(--gray-a2)' }}
       >
-        <Heading size="4">Housing & AI  </Heading>
+        <Heading size="4">Iowa State University Extensions and Outreach - CED </Heading>
         <IconButton
           size="2"
           variant="ghost"

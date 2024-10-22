@@ -25,7 +25,7 @@ export const Header = () => {
       <Flex align="center" gap="3">
         <NextLink href="/">
           <Heading as="h2" size="4" style={{ maxWidth: 200 }}>
-            Housing & AI
+          Iowa State University Extensions and Outreach - CED
           </Heading>
         </NextLink>
         <Flex align="center" gap="3" className="ml-auto">

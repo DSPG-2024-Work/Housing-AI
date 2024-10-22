@@ -89,7 +89,7 @@ const Chat = (props: ChatProps, ref: any) => {
   }, []);
 
   const fetchSuggestions = useCallback(async (input: string) => {
-    const mockSuggestions = ['Housing & AI:Can you Generate a map', 'Housing & AI:What is RHRA program?', 'Housing & AI:Provide some source', 'Hello', 'To make only the text on your screen larger, adjust the slider next to Text size.', 'To make only the text on your screen larger, adjust the slider next to Text size. To make everything larger, including images and apps, select Display, and then choose an option from the drop-down menu next to Scale.'];
+    const mockSuggestions = ['Iowa State University Extensions and Outreach - CED :Can you Generate a map', 'Iowa State University Extensions and Outreach - CED :What is RHRA program?', 'Iowa State University Extensions and Outreach - CED :Provide some source', 'Hello', 'To make only the text on your screen larger, adjust the slider next to Text size.', 'To make only the text on your screen larger, adjust the slider next to Text size. To make everything larger, including images and apps, select Display, and then choose an option from the drop-down menu next to Scale.'];
     const filteredSuggestions = mockSuggestions.filter((s) => s.toLowerCase().includes(input.toLowerCase()));
     // setSuggestions(filteredSuggestions);
     // setShowSuggestions(filteredSuggestions.length > 0);
@@ -348,7 +348,7 @@ const Chat = (props: ChatProps, ref: any) => {
         px="4"
         style={{ backgroundColor: 'var(--gray-a2)' }}
       >
-        <Heading size="4">Housing & AI</Heading>
+        <Heading size="4">Iowa State University Extensions and Outreach - CED</Heading>
       </Flex>
       <ScrollArea
         className="flex-1 px-4"
