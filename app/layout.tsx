@@ -8,13 +8,13 @@ import '@/styles/theme-config.css'
 export const metadata = {
   title: {
     default: 'Iowa State University Extensions and Outreach - CED',
-    template: `%s - Iowa State University Extensions and Outreach - CED`
+    template: `%s - ISU Extensions and Outreach - CED`
   },
-  description: 'AI assistant powered by ChatGPT',
+  description: 'Iowa State University Extensions and Outreach - CED Chat Interface',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png'
+    icon: '/Cy.png',
+    shortcut: '/Cy.png',
+    apple: '/Cy.png'
   }
 }
 
