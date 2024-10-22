@@ -7,8 +7,8 @@ import '@/styles/theme-config.css'
 
 export const metadata = {
   title: {
-    default: 'ChatGPT Lite',
-    template: `%s - ChatGPT Lite`
+    default: 'Iowa State University Extensions and Outreach - CED',
+    template: `%s - Iowa State University Extensions and Outreach - CED`
   },
   description: 'AI assistant powered by ChatGPT',
   icons: {

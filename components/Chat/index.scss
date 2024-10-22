@@ -197,8 +197,47 @@
   opacity: 0.8;
   z-index: 10000; /* Ensure button is above the iframe */
 }
+.header-logo {
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
 
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .header-logo {
+    width: 180px !important;
+    height: 50px !important;
+  }
+  
+  h2 {
+    font-size: 1.1rem !important;
+  }
+}
 
+@media (max-width: 768px) {
+  .header-logo {
+    width: 150px !important;
+    height: 45px !important;
+  }
+  
+  h2 {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-logo {
+    width: 120px !important;
+    height: 40px !important;
+  }
+  
+  h2 {
+    font-size: 0.9rem !important;
+  }
+}
 
 
 
